@@ -15,7 +15,7 @@ namespace MovieLibrary.types
 
         public override string display()
         {
-            return "Movie: " + title + " -Genres: " + genres.ToString() + " -ID: " + id;
+            return "Movie: " + title + " -Genres: " + String.Join("|", genres) + " -ID: " + id;
         }
     }
 }
