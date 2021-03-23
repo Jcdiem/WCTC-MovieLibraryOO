@@ -2,6 +2,7 @@
 using MovieLibrary.types;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 
@@ -33,17 +34,11 @@ namespace MovieLibrary.Managers
                         record.title,
                         Convert.ToInt32(record.season),
                         Convert.ToInt32(record.episode),
-                        record.writers.Split(", ")
+                        record.writers.Split("|")
                         ));
                 }
             }
         }
-
-        public override void OpenJSON(string filePath)
-        {
-            throw new NotImplementedException();
-        }
-
 
         public override void writeToJson()
         {
@@ -53,6 +48,15 @@ namespace MovieLibrary.Managers
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, base.dbItemLibrary);
+            }
+        }
+        public override void OpenJSON(string filePath)
+        {
+            using (StreamReader r = new StreamReader(filePath))
+            {
+                string json = r.ReadToEnd();
+                var tempList = JsonConvert.DeserializeObject<List<Show>>(json);
+                base.dbItemLibrary.AddRange(tempList);
             }
         }
     }

@@ -2,6 +2,7 @@
 using MovieLibrary.types;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MovieLibrary.Managers
@@ -32,15 +33,10 @@ namespace MovieLibrary.Managers
                         record.title,
                         record.format,
                         Convert.ToInt32(record.length),
-                        convertRegionsToInt(record.regions)
+                        convertRegionsToInt(record.regions.Split('|'))
                         ));
                 }
             }
-        }
-
-        public override void OpenJSON(string filePath)
-        {
-            throw new NotImplementedException();
         }
 
         private int[] convertRegionsToInt(string[] regionInfoStrArray)
@@ -56,6 +52,15 @@ namespace MovieLibrary.Managers
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, base.dbItemLibrary);
+            }
+        }
+        public override void OpenJSON(string filePath)
+        {
+            using (StreamReader r = new StreamReader(filePath))
+            {
+                string json = r.ReadToEnd();
+                var tempList = JsonConvert.DeserializeObject<List<Show>>(json);
+                base.dbItemLibrary.AddRange(tempList);
             }
         }
 

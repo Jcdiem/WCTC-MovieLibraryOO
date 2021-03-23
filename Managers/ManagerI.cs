@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 using CsvHelper;
-using System.Linq;
 using MovieLibrary.types;
 
 namespace MovieLibrary.Managers
