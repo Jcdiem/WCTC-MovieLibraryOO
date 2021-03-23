@@ -29,6 +29,7 @@ namespace MovieLibrary.Managers
                 var stringDB = csv.GetRecords<dynamic>();
                 foreach (var record in stringDB)
                 {
+
                     base.dbItemLibrary.Add(new Show(
                         Convert.ToInt32(record.id),
                         record.title,

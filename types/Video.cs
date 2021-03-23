@@ -20,7 +20,7 @@ namespace MovieLibrary.types
 
         public override string display()
         {
-            throw new NotImplementedException();
+            return "Title: " + this.title + ", Id: " + this.id + ", Format: " + this.format + ", Length (m): " + this.length + ", Regions: " + string.Join("|", this.regions);
         }
     }
 }
