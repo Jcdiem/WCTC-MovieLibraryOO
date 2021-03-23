@@ -10,6 +10,7 @@ namespace MovieLibrary.Managers
 {
     public abstract class ManagerI
     {
+
         protected int curLine = 0;
         protected CsvReader csv;
         protected List<DbItemI> dbItemLibrary;
@@ -17,6 +18,12 @@ namespace MovieLibrary.Managers
         //Kinda deprecated, kept for error checking purposes
         //Original purpose was to iterate through new entries
         protected int? newEntryStartIndex = null;
+
+        protected ManagerI()
+        {
+            dbItemLibrary = new List<DbItemI>();
+        }
+
 
         public abstract void addItem(DbItemI item);
         public abstract void OpenCSV(string filePath);

@@ -10,7 +10,7 @@ namespace MovieLibrary.types
         public int episode { get; private set; }
         public string[] writers { get; private set; }
 
-        public Show(int id, string title, int season, int episode, string[] writers) : base (id, title)
+        public Show(int id, string title, int season, int episode, string[] writers) : base (id, title, (int)dbInfoTypes.SHOW)
         {
             this.season = season;
             this.episode = episode;

@@ -28,11 +28,11 @@ namespace MovieLibrary.Managers
                 foreach (var record in stringDB)
                 {
                     base.dbItemLibrary.Add(new Show(
-                        (int)record.id,
+                        Convert.ToInt32(record.id),
                         record.title,
-                        (int)record.season,
-                        (int)record.episode,
-                        record.writers.split(", ")
+                        Convert.ToInt32(record.season),
+                        Convert.ToInt32(record.episode),
+                        record.writers.Split(", ")
                         ));
                 }
             }
@@ -43,5 +43,4 @@ namespace MovieLibrary.Managers
             throw new NotImplementedException();
         }
     }
-}
 }

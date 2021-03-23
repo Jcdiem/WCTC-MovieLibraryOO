@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using MovieLibrary.types;
 using System;
+using System.ComponentModel;
 using System.IO;
 
 namespace MovieLibrary.Managers
@@ -24,9 +25,13 @@ namespace MovieLibrary.Managers
             using (var csv = new CsvReader(fileReader, System.Globalization.CultureInfo.CurrentCulture))
             {
                 var stringDB = csv.GetRecords<dynamic>();
-                foreach(var record in stringDB)
+                
+                foreach (var record in stringDB)
                 {
-                    base.dbItemLibrary.Add(new Movie(record.genres.split('|'), (int)record.id, record.title));
+                    base.dbItemLibrary.Add(new Movie(
+                        record.genres.Split('|'),
+                        Convert.ToInt32(record.id),
+                        record.title));
                 }
             }         
         }

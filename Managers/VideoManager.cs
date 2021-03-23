@@ -27,10 +27,10 @@ namespace MovieLibrary.Managers
                 foreach (var record in stringDB)
                 {
                     base.dbItemLibrary.Add(new Video(
-                        (int)record.id, 
+                        Convert.ToInt32(record.id), 
                         record.title,
-                        record.format, 
-                        (int)record.length,
+                        record.format,
+                        Convert.ToInt32(record.length),
                         convertRegionsToInt(record.regions)
                         ));
                 }

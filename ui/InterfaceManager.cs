@@ -45,8 +45,22 @@ namespace MovieLibrary.ui
                             string[] writers = Console.ReadLine().Split(", ");
                             Console.WriteLine("OK! Adding show...");
                             manager.addItem(new Show(manager.getEntryCount(),title,season,episode,writers));
+                            Console.WriteLine("Finished adding.");
                         }
                         else if (manager is Managers.VideoManager)
+                        {
+                            Console.WriteLine("One type of format (this copy's type)");
+                            string format = Console.ReadLine();
+                            Console.WriteLine("Length, in minutes");
+                            int length = Convert.ToInt32(Console.ReadLine());
+                            Console.WriteLine("Regions, comma sepperated integers without space \n " +
+                                "Example: 0,1,2,3,4,5");
+                            string[] regionStr = Console.ReadLine().Split(",");
+                            Console.WriteLine("OK! Adding video...");
+                            int[] regionInt = Array.ConvertAll(regionStr, e => int.Parse(e));
+                            manager.addItem(new Video(manager.getEntryCount(), title, format, length, regionInt));
+                            Console.WriteLine("Finished adding.");
+                        }
                         
                         Console.WriteLine("Press enter to continue");
                         Console.ReadLine();
@@ -93,7 +107,7 @@ namespace MovieLibrary.ui
         public int getDbItemType()
         {
             int dbItemType = -1;
-            while (dbItemType != -1)
+            while (dbItemType == -1)
             {
                 Console.WriteLine("Please enter the number for the data type: \n 1. Movie \n 2. Show \n 3. Video ");
                 var tInput = Convert.ToInt32(Console.ReadLine());
