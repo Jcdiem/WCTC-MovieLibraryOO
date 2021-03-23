@@ -4,20 +4,16 @@ using System.Text;
 
 namespace MovieLibrary.types
 {
-    class Movie : dbItemI
+    class Movie : DbItemI
     {
-        public int id { get; private set; }
-        public string title { get; private set; }
-        public string[] genres { get; private set; }
-
-        public Movie(int id, string title, string[] genres)
+        public Movie(string[] genres, int id, string title) : base(id, title, (int)DbItemI.dbInfoTypes.MOVIE)
         {
-            this.id = id;
-            this.title = title;
-            this.genres = genres;
+            this.genres = genres ?? throw new ArgumentNullException(nameof(genres));
         }
 
-        public string display()
+        public string[] genres { get; private set; }
+
+        public override string display()
         {
             return "Movie: " + title + " -Genres: " + genres.ToString() + " -ID: " + id;
         }

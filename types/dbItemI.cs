@@ -4,8 +4,24 @@ using System.Text;
 
 namespace MovieLibrary.types
 {
-    public interface dbItemI
+    public abstract class DbItemI
     {
-        public string display();
+        protected DbItemI(int id, string title, int type)
+        {
+            this.id = id;
+            this.title = title;
+            this.type = type;
+        }
+        public enum dbInfoTypes : int
+        {
+            DEBUG = -1,
+            MOVIE = 0,
+            SHOW = 1,
+            VIDEO = 2,
+        }
+        public int id { get; private set; }
+        public int type { get; private set; }
+        public string title { get; private set; }
+        public abstract string display();
     }
 }

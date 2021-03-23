@@ -4,24 +4,21 @@ using System.Text;
 
 namespace MovieLibrary.types
 {
-    class Video : dbItemI
+    class Video : DbItemI
     {
-        public int id { get; private set;}
-        public string title { get; private set; }
+        
         public string format { get; private set; }
         public int length { get; private set; }
         public int[] regions { get; private set; }
 
-        public Video(int id, string title, string format, int length, int[] regions)
+        public Video(int id, string title, string format, int length, int[] regions) : base (id, title, (int)DbItemI.dbInfoTypes.SHOW)
         {
-            this.id = id;
-            this.title = title;
             this.format = format;
             this.length = length;
             this.regions = regions;
         }
 
-        string dbItemI.display()
+        public override string display()
         {
             throw new NotImplementedException();
         }
