@@ -28,7 +28,21 @@ namespace MovieLibrary.Managers
         public abstract void addItem(DbItemI item);
         public abstract void OpenCSV(string filePath);
         public abstract void OpenJSON(string filePath);
+        public abstract void writeToJson();
 
+        public void Open(string filePath)
+        {
+            //Check file type
+            if (filePath.Contains(".json"))
+            {
+                OpenJSON(filePath);
+            }
+            else if (filePath.Contains(".csv"))
+            {
+                OpenCSV(filePath);
+            }
+            else throw new Exception("Improper file type given to Open() method");
+        }
         public string readNextEntries(int numLines)
         {
             string outStr = "";

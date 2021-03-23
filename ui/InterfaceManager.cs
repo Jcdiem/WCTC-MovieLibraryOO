@@ -7,13 +7,36 @@ namespace MovieLibrary.ui
 {
     public class InterfaceManager
     {
+        private enum fileTypes
+        {
+            JSON = 1,
+            CSV = 2,
+        }
 
 
         public void handleDbOperation(int operationType, Managers.ManagerI manager)
         {
+            int fileType = 0;
             //Write data
             if (operationType == 1)
             {
+                while (true)
+                {
+                    Console.WriteLine("What type of file do you want? \n 1. JSON \n 2. CSV");
+                    switch (Convert.ToInt32(Console.ReadLine()))
+                    {
+                        case (int)fileTypes.JSON:
+                            fileType = (int)fileTypes.JSON;
+                            break;
+                        case (int)fileTypes.CSV:
+                            fileType = (int)fileTypes.CSV;
+                            break;
+                        default:
+                            Console.WriteLine("Try again, with numbers this time");
+                            break;
+                    }
+                    if (fileType != 0) break;
+                }               
                 bool done = false;
                 while (!done)
                 {
@@ -67,9 +90,19 @@ namespace MovieLibrary.ui
                     }
                     if (input == 2)
                     {
-                        Console.WriteLine("Writing to CSV file...");
-                        manager.saveToCsv();
-                        Console.WriteLine("Done.");
+                        if(fileType == (int)fileTypes.CSV)
+                        {
+                            Console.WriteLine("Writing to CSV file...");
+                            manager.saveToCsv();
+                            Console.WriteLine("Done.");
+                        }
+                        else if(fileType == (int)fileTypes.JSON)
+                        {
+                            Console.WriteLine("Writing to JSON file...");
+                            manager.writeToJson();
+                            Console.WriteLine("Done.");
+                        }
+                        
                         done = !done; //Exit the loop for adding movies
                     }
 

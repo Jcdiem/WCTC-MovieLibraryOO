@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using MovieLibrary.types;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 
@@ -46,5 +47,17 @@ namespace MovieLibrary.Managers
         {
             return Array.ConvertAll(regionInfoStrArray, e => int.Parse(e));
         }
+
+        public override void writeToJson()
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+            using (StreamWriter sw = new StreamWriter(@"videoLibrary.json"))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, base.dbItemLibrary);
+            }
+        }
+
     }
 }

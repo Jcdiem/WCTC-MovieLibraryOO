@@ -39,7 +39,7 @@ namespace MovieLibrary.Managers
                
             }
         }
-        private void writeToJson()
+        public override void writeToJson()
         {
             JsonSerializer serializer = new JsonSerializer();
             serializer.NullValueHandling = NullValueHandling.Ignore;
@@ -51,10 +51,11 @@ namespace MovieLibrary.Managers
         }
         public override void OpenJSON(string filePath)
         {
-            using (StreamReader r = new StreamReader("file.json"))
+            using (StreamReader r = new StreamReader(filePath))
             {
                 string json = r.ReadToEnd();
-                base.dbItemLibrary = JsonConvert.DeserializeObject<List<DbItemI>>(json);
+                var tempList = JsonConvert.DeserializeObject<List<Movie>>(json);
+                base.dbItemLibrary.AddRange(tempList);
             }
         }
     }
