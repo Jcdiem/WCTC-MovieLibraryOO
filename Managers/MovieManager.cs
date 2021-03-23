@@ -1,6 +1,8 @@
 ﻿using CsvHelper;
 using MovieLibrary.types;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
@@ -33,12 +35,27 @@ namespace MovieLibrary.Managers
                         Convert.ToInt32(record.id),
                         record.title));
                 }
-            }         
-        }
 
+               
+            }
+        }
+        private void writeToJson()
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+            using (StreamWriter sw = new StreamWriter(@"movieLibrary.json"))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, base.dbItemLibrary);
+            }
+        }
         public override void OpenJSON(string filePath)
         {
-            throw new NotImplementedException();
+            using (StreamReader r = new StreamReader("file.json"))
+            {
+                string json = r.ReadToEnd();
+                base.dbItemLibrary = JsonConvert.DeserializeObject<List<DbItemI>>(json);
+            }
         }
     }
 }
