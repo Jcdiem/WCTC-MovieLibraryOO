@@ -19,7 +19,7 @@ namespace MovieLibrary.types
 
         public override string display()
         {
-            return "Show: " + title + " -Season: " + season + " -Episode " + episode + " -Writers " + writers + " -ID: " + id;
+            return "Show: " + title + " -Season: " + season + " -Episode " + episode + " -Writers " + String.Join("|", writers) + " -ID: " + id;
         }
     }
 }

@@ -14,10 +14,13 @@ namespace MovieLibrary.types
         }
         public enum dbInfoTypes : int
         {
+            //Dummy types
+            UNIVERSAL = -2,
             DEBUG = -1,
+            //Real Types
             MOVIE = 0,
             SHOW = 1,
-            VIDEO = 2,
+            VIDEO = 2,            
         }
         public int id { get; private set; }
         public int type { get; private set; }

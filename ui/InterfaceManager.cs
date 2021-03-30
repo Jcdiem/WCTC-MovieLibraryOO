@@ -14,8 +14,7 @@ namespace MovieLibrary.ui
 
         public void handleDbOperation(Managers.ManagerI manager)
         {
-            if(manager is Managers.MovieManager) Console.WriteLine("Enter a 1 for data adding, a 2 for data reading, and a 3 for data searching.");
-            else Console.WriteLine("Enter a 1 for data adding and a 2 for data reading.");
+            Console.WriteLine("Enter a 1 for data adding, a 2 for data reading, and a 3 for data searching.");
             int operationType = Convert.ToInt32(Console.ReadLine());
             int fileType = 0;
             //Write data
@@ -154,7 +153,7 @@ namespace MovieLibrary.ui
             int dbItemType = -1;
             while (dbItemType == -1)
             {
-                Console.WriteLine("Please enter the number for the data type: \n 1. Movie \n 2. Show \n 3. Video ");
+                Console.WriteLine("Please enter the number for the data type: \n 1. Movie \n 2. Show \n 3. Video \n 4. All Types (Read Only) ");
                 var tInput = Convert.ToInt32(Console.ReadLine());
                 switch (tInput)
                 {
@@ -170,6 +169,10 @@ namespace MovieLibrary.ui
                         Console.WriteLine("Selected 'Video'");
                         dbItemType = (int)DbItemI.dbInfoTypes.VIDEO;
                         break;
+                    case 4:
+                        Console.WriteLine("Selected Universal Data Reading");
+                        dbItemType = (int)DbItemI.dbInfoTypes.UNIVERSAL;
+                        break;
                     default:
                         Console.WriteLine("Improper selection, try again.");
                         break;
@@ -177,5 +180,32 @@ namespace MovieLibrary.ui
             }
             return dbItemType;
         }
-    }
+        public string[] getSearchPathArray()
+        {
+            //TODO: Define a 'global' var for amount of real data types supported
+            //------Do not just use count, dummy vars will be counted
+            string[] outArr = new string[3];
+            Console.WriteLine("Please enter the path/name of your movie database: \n" +
+                "--Examples included are movies.csv and movieLibrary.json");
+            outArr[(int)DbItemI.dbInfoTypes.MOVIE] = Console.ReadLine();
+            Console.WriteLine("Please enter the path/name of your show database: \n" +
+                "--Examples included are shows.csv and showLibrary.json");
+            outArr[(int)DbItemI.dbInfoTypes.SHOW] = Console.ReadLine();
+            Console.WriteLine("Please enter the path/name of your movie database: \n" +
+                "--Examples included are videos.csv and videoLibrary.json");
+            outArr[(int)DbItemI.dbInfoTypes.VIDEO] = Console.ReadLine();
+            return outArr;
+        }
+        public void searchUniversal(Utilities.Searcher search)
+        {
+            while (true)
+            {
+                Console.WriteLine("Enter the part of a title you would like to search: ");
+                Console.WriteLine(search.searchDatabasesForTitle(Console.ReadLine()));
+                Console.WriteLine("Search again? (Y/n)");
+                if (Console.ReadLine().ToUpper() == "N") break;
+            }
+            Console.WriteLine("Goodbye!");
+        }
+    }    
 }

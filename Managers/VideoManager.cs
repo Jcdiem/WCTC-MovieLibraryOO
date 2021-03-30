@@ -39,7 +39,7 @@ namespace MovieLibrary.Managers
             }
         }
 
-        private int[] convertRegionsToInt(string[] regionInfoStrArray)
+        public static int[] convertRegionsToInt(string[] regionInfoStrArray)
         {
             return Array.ConvertAll(regionInfoStrArray, e => int.Parse(e));
         }
