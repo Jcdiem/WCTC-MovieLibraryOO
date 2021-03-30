@@ -20,7 +20,8 @@ namespace MovieLibrary.types
 
         public override string displayCSV()
         {
-            return id + ',' + title + ',' + String.Join("|", genres);
+            //Have to add string null at beginning so c# returns proper string
+            return "" + id + ',' + title + ',' + String.Join("|", genres);
         }
     }
 }

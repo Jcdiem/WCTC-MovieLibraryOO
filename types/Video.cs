@@ -25,7 +25,8 @@ namespace MovieLibrary.types
 
         public override string displayCSV()
         {
-            return this.id + ',' + this.title + ',' + this.format + ',' + this.length + ',' + string.Join("|", this.regions);
+            //Have to add string null at beginning so c# returns proper string
+            return "" + this.id + ',' + this.title + ',' + this.format + ',' + this.length + ',' + string.Join("|", this.regions);
         }
     }
 }

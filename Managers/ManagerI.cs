@@ -15,9 +15,6 @@ namespace MovieLibrary.Managers
         protected CsvReader csv;
         protected List<DbItemI> dbItemLibrary;
         protected string filePath;
-        //Kinda deprecated, kept for error checking purposes
-        //Original purpose was to iterate through new entries
-        protected int? newEntryStartIndex = null;
 
         protected ManagerI()
         {
@@ -54,6 +51,7 @@ namespace MovieLibrary.Managers
 
         public void Open(string filePath)
         {
+            this.filePath = filePath;
             //Check file type
             if (filePath.Contains(".json"))
             {
@@ -109,18 +107,38 @@ namespace MovieLibrary.Managers
 
         public void saveToCsv()
         {
-            if (newEntryStartIndex != null)
+            if (dbItemLibrary.Any())
             {
-                //Open the file in create mode so we blast away deleted data
-                //NOTE: probably not good practice, but CSV Helper is touchy
-                CsvWriter csvWrt = new CsvWriter(new StreamWriter(File.Open(filePath, FileMode.CreateNew)), CultureInfo.CurrentCulture);
-                csvWrt.WriteRecords(dbItemLibrary);
-                newEntryStartIndex = null; //reset the index
+                //Remove any prior extensions
+                string outPath = "";
+                foreach (string pathPart in this.filePath.Split('.'))
+                {
+                    if(!(pathPart.ToLower().Contains("json") || pathPart.ToLower().Contains("csv")))
+                    {
+                        outPath += pathPart + ".";
+                    }
+                }
+                //Create a csv extension
+                outPath += "csv";
+
+                //Use custom CSV Writer because CSV helper documentation is terrible
+                //---Not as cool as following fancy standards, but I can actually know how this works at a glance.
+                
+                //Set up the lines to be written, with an extra space for headers
+                string[] linesOut = new string[dbItemLibrary.Count+1];
+
+                //Get the header
+                linesOut[0] = File.ReadLines(filePath).First();
+                //Add all data, offset by 1 to keep in line with database
+                for (int i = 1; i < linesOut.Length; i++) linesOut[i] = dbItemLibrary[i - 1].displayCSV();
+                //Write out the data, overwriting if previous file
+                File.WriteAllLines(outPath,linesOut);
+
             }
             else
             {
-                //Prevent trying to save nothing
-                throw new InvalidOperationException("Null starting point. New entires must be added before writing to CSV");
+                //Prevent trying to save null db
+                throw new InvalidOperationException("Null database. Entries must exist before writing to CSV file");
             }
 
         }
