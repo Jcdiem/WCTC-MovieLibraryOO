@@ -47,9 +47,8 @@ namespace MovieLibrary
                         throw new Exception("Unvalidated user input for data type caused crash");
                 }
                 Console.WriteLine("Please give the path to the file or the file name if in the current directory.");
-                manager.Open(Console.ReadLine());
-                Console.WriteLine("Enter a 1 for data adding and a 2 for data reading.");
-                uix.handleDbOperation(Convert.ToInt32(Console.ReadLine()),manager);
+                manager.Open(Console.ReadLine());               
+                uix.handleDbOperation(manager);
                 
            }
            catch (Exception ex)

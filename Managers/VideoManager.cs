@@ -63,6 +63,5 @@ namespace MovieLibrary.Managers
                 base.dbItemLibrary.AddRange(tempList);
             }
         }
-
     }
 }

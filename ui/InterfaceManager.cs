@@ -1,7 +1,5 @@
 ﻿using MovieLibrary.types;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MovieLibrary.ui
 {
@@ -14,8 +12,11 @@ namespace MovieLibrary.ui
         }
 
 
-        public void handleDbOperation(int operationType, Managers.ManagerI manager)
+        public void handleDbOperation(Managers.ManagerI manager)
         {
+            if(manager is Managers.MovieManager) Console.WriteLine("Enter a 1 for data adding, a 2 for data reading, and a 3 for data searching.");
+            else Console.WriteLine("Enter a 1 for data adding and a 2 for data reading.");
+            int operationType = Convert.ToInt32(Console.ReadLine());
             int fileType = 0;
             //Write data
             if (operationType == 1)
@@ -40,7 +41,7 @@ namespace MovieLibrary.ui
                 bool done = false;
                 while (!done)
                 {
-                    Console.WriteLine("---WRITE TO MOVIE DATABASE---");
+                    Console.WriteLine("---WRITE TO DATABASE---");
                     Console.WriteLine("Enter 1 for adding a new item and 2 for saving changes to the file and close.");
                     var input = Convert.ToInt32(Console.ReadLine());
                     if (input == 1)
@@ -112,7 +113,7 @@ namespace MovieLibrary.ui
             //Read data
             else if (operationType == 2)
             {
-                Console.WriteLine("---READ MOVIE DATABASE---");
+                Console.WriteLine("---READ DATABASE---");
                 bool done = false;
                 while (!done)
                 {
@@ -132,6 +133,17 @@ namespace MovieLibrary.ui
                         Console.WriteLine(manager.readAllData());
                         done = true;
                     }
+                }
+            }
+            //Data searching
+            else if (operationType == 3)
+            {
+                while (true)
+                {
+                    Console.WriteLine("Enter the title of the item you would like to search for: ");
+                    Console.WriteLine(manager.searchByTitle(Console.ReadLine()));
+                    Console.WriteLine("Is this what you were lookin for? Y/N");
+                    if (Console.ReadLine().ToUpper() == "Y") break;
                 }
             }
             Console.WriteLine("Press enter to leave :)");

@@ -4,6 +4,7 @@ using System.IO;
 using System.Globalization;
 using CsvHelper;
 using MovieLibrary.types;
+using System.Linq;
 
 namespace MovieLibrary.Managers
 {
@@ -28,6 +29,28 @@ namespace MovieLibrary.Managers
         public abstract void OpenCSV(string filePath);
         public abstract void OpenJSON(string filePath);
         public abstract void writeToJson();
+        
+        
+        
+        public string searchByTitle(string searchTitle)
+        {
+            if (dbItemLibrary.Any())
+            {
+                try
+                {
+                    var searchResult = dbItemLibrary.Where(item => item.title.Contains(searchTitle));
+                    string outStr = "Found " + searchResult.Count() + " Items! \n";
+                    foreach (var item in searchResult) outStr += item.display() + "\n";
+                    return outStr;
+                }
+                catch (System.InvalidOperationException)
+                {
+                    return "Item not found!";
+                }
+
+            }
+            else throw new Exception("You cannot search before adding a database!");
+        }
 
         public void Open(string filePath)
         {
