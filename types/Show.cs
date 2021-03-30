@@ -21,5 +21,10 @@ namespace MovieLibrary.types
         {
             return "Show: " + title + " -Season: " + season + " -Episode " + episode + " -Writers " + String.Join("|", writers) + " -ID: " + id;
         }
+
+        public override string displayCSV()
+        {
+            return id + ',' + title + ',' + season + ',' + episode + ',' + String.Join("|", writers);
+        }
     }
 }

@@ -22,5 +22,10 @@ namespace MovieLibrary.types
         {
             return "Title: " + this.title + ", Id: " + this.id + ", Format: " + this.format + ", Length (m): " + this.length + ", Regions: " + string.Join("|", this.regions);
         }
+
+        public override string displayCSV()
+        {
+            return this.id + ',' + this.title + ',' + this.format + ',' + this.length + ',' + string.Join("|", this.regions);
+        }
     }
 }

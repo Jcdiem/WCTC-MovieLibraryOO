@@ -26,5 +26,6 @@ namespace MovieLibrary.types
         public int type { get; private set; }
         public string title { get; private set; }
         public abstract string display();
+        public abstract string displayCSV();
     }
 }

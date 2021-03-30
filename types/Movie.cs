@@ -17,5 +17,10 @@ namespace MovieLibrary.types
         {
             return "Movie: " + title + " -Genres: " + String.Join("|", genres) + " -ID: " + id;
         }
+
+        public override string displayCSV()
+        {
+            return id + ',' + title + ',' + String.Join("|", genres);
+        }
     }
 }
