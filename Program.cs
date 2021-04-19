@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
-using MovieLibrary.types;
+using MovieLibrary.DataModels;
 using NLog;
 
 namespace MovieLibrary

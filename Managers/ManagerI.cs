@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Globalization;
 using CsvHelper;
-using MovieLibrary.types;
+using MovieLibrary.DataModels;
 using System.Linq;
 
 namespace MovieLibrary.Managers

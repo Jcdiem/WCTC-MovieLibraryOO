@@ -1,4 +1,4 @@
-﻿using MovieLibrary.types;
+﻿using MovieLibrary.DataModels;
 using System;
 
 namespace MovieLibrary.ui
@@ -54,7 +54,7 @@ namespace MovieLibrary.ui
                             Console.WriteLine("Example: \'Action|Comedy|Romance\'");
                             string[] genres = Console.ReadLine().Split("|");
                             Console.WriteLine("Adding movie...");
-                            manager.addItem(new Movie(genres, manager.getEntryCount(), title));
+                            manager.addItem(new IMovie(genres, manager.getEntryCount(), title));
                             Console.WriteLine("Done.");
                         }
                         else if(manager is Managers.ShowManager)
@@ -67,7 +67,7 @@ namespace MovieLibrary.ui
                                 "Example: Steve, Dave, Carl");
                             string[] writers = Console.ReadLine().Split(", ");
                             Console.WriteLine("OK! Adding show...");
-                            manager.addItem(new Show(manager.getEntryCount(),title,season,episode,writers));
+                            manager.addItem(new IShow(manager.getEntryCount(),title,season,episode,writers));
                             Console.WriteLine("Finished adding.");
                         }
                         else if (manager is Managers.VideoManager)
@@ -81,7 +81,7 @@ namespace MovieLibrary.ui
                             string[] regionStr = Console.ReadLine().Split(",");
                             Console.WriteLine("OK! Adding video...");
                             int[] regionInt = Array.ConvertAll(regionStr, e => int.Parse(e));
-                            manager.addItem(new Video(manager.getEntryCount(), title, format, length, regionInt));
+                            manager.addItem(new IVideo(manager.getEntryCount(), title, format, length, regionInt));
                             Console.WriteLine("Finished adding.");
                         }
                         

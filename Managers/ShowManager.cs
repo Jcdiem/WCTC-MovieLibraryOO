@@ -1,5 +1,5 @@
 ﻿using CsvHelper;
-using MovieLibrary.types;
+using MovieLibrary.DataModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace MovieLibrary.Managers
         public ShowManager() : base() { }
         public override void addItem(DbItemI inShow)
         {
-            if (inShow is Show)
+            if (inShow is IShow)
             {
                 base.dbItemLibrary.Add(inShow);
             }
@@ -30,7 +30,7 @@ namespace MovieLibrary.Managers
                 foreach (var record in stringDB)
                 {
 
-                    base.dbItemLibrary.Add(new Show(
+                    base.dbItemLibrary.Add(new IShow(
                         Convert.ToInt32(record.id),
                         record.title,
                         Convert.ToInt32(record.season),
@@ -56,7 +56,7 @@ namespace MovieLibrary.Managers
             using (StreamReader r = new StreamReader(filePath))
             {
                 string json = r.ReadToEnd();
-                var tempList = JsonConvert.DeserializeObject<List<Show>>(json);
+                var tempList = JsonConvert.DeserializeObject<List<IShow>>(json);
                 base.dbItemLibrary.AddRange(tempList);
             }
         }

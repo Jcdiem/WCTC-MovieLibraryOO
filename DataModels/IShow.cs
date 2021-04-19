@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MovieLibrary.types
+namespace MovieLibrary.DataModels
 {
-    class Show : DbItemI
+    class IShow : DbItemI
     {
         public int season { get; private set; }
         public int episode { get; private set; }
         public string[] writers { get; private set; }
 
-        public Show(int id, string title, int season, int episode, string[] writers) : base (id, title, (int)dbInfoTypes.SHOW)
+        public IShow(int id, string title, int season, int episode, string[] writers) : base (id, title, (int)dbInfoTypes.SHOW)
         {
             this.season = season;
             this.episode = episode;

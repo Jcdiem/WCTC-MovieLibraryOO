@@ -1,5 +1,5 @@
 ﻿using CsvHelper;
-using MovieLibrary.types;
+using MovieLibrary.DataModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace MovieLibrary.Managers
         public MovieManager() : base() { }
         public override void addItem(DbItemI inMovie)
         {
-            if (inMovie is Movie)
+            if (inMovie is IMovie)
             {
                 base.dbItemLibrary.Add(inMovie);
             }
@@ -29,7 +29,7 @@ namespace MovieLibrary.Managers
                 
                 foreach (var record in stringDB)
                 {
-                    base.dbItemLibrary.Add(new Movie(
+                    base.dbItemLibrary.Add(new IMovie(
                         record.genres.Split('|'),
                         Convert.ToInt32(record.id),
                         record.title));
@@ -53,7 +53,7 @@ namespace MovieLibrary.Managers
             using (StreamReader r = new StreamReader(filePath))
             {
                 string json = r.ReadToEnd();
-                var tempList = JsonConvert.DeserializeObject<List<Movie>>(json);
+                var tempList = JsonConvert.DeserializeObject<List<IMovie>>(json);
                 base.dbItemLibrary.AddRange(tempList);
             }
         }

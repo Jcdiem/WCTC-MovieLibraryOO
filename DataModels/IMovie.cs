@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MovieLibrary.types
+namespace MovieLibrary.DataModels
 {
-    class Movie : DbItemI
+    class IMovie : DbItemI
     {
-        public Movie(string[] genres, int id, string title) : base(id, title, (int)DbItemI.dbInfoTypes.MOVIE)
+        public IMovie(string[] genres, int id, string title) : base(id, title, (int)DbItemI.dbInfoTypes.MOVIE)
         {
             this.genres = genres ?? throw new ArgumentNullException(nameof(genres));
         }

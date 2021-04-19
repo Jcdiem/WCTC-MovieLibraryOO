@@ -1,5 +1,5 @@
 ﻿using CsvHelper;
-using MovieLibrary.types;
+using MovieLibrary.DataModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -79,13 +79,13 @@ namespace MovieLibrary.Utilities
                 {
                     //Convert the specific, derived type to a the base type
                     case (int) DbItemI.dbInfoTypes.MOVIE:
-                        conversionList.AddRange(JsonConvert.DeserializeObject<List<Movie>>(json));
+                        conversionList.AddRange(JsonConvert.DeserializeObject<List<IMovie>>(json));
                         break;
                     case (int) DbItemI.dbInfoTypes.SHOW:
-                        conversionList.AddRange(JsonConvert.DeserializeObject<List<Show>>(json));
+                        conversionList.AddRange(JsonConvert.DeserializeObject<List<IShow>>(json));
                         break;
                     case (int) DbItemI.dbInfoTypes.VIDEO:
-                        conversionList.AddRange(JsonConvert.DeserializeObject<List<Video>>(json));
+                        conversionList.AddRange(JsonConvert.DeserializeObject<List<IVideo>>(json));
                         break;
                     default:
                         throw new ArgumentException("OpenJson given incorrect db item enum type of " + dataType);
@@ -107,7 +107,7 @@ namespace MovieLibrary.Utilities
                     case (int)DbItemI.dbInfoTypes.MOVIE:
                         foreach (var record in stringDB)
                         {
-                            csvList.Add(new Movie(
+                            csvList.Add(new IMovie(
                                 record.genres.Split('|'),
                                 Convert.ToInt32(record.id),
                                 record.title));
@@ -116,7 +116,7 @@ namespace MovieLibrary.Utilities
                     case (int)DbItemI.dbInfoTypes.SHOW:
                         foreach (var record in stringDB)
                         {
-                           csvList.Add(new Show(
+                           csvList.Add(new IShow(
                                 Convert.ToInt32(record.id),
                                 record.title,
                                 Convert.ToInt32(record.season),
@@ -128,7 +128,7 @@ namespace MovieLibrary.Utilities
                     case (int)DbItemI.dbInfoTypes.VIDEO:
                         foreach (var record in stringDB)
                         {
-                            csvList.Add(new Video(
+                            csvList.Add(new IVideo(
                                 Convert.ToInt32(record.id),
                                 record.title,
                                 record.format,

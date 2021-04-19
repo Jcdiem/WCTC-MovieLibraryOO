@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MovieLibrary.types
+namespace MovieLibrary.DataModels
 {
-    class Video : DbItemI
+    class IVideo : DbItemI
     {
         
         public string format { get; private set; }
         public int length { get; private set; }
         public int[] regions { get; private set; }
 
-        public Video(int id, string title, string format, int length, int[] regions) : base (id, title, (int)DbItemI.dbInfoTypes.SHOW)
+        public IVideo(int id, string title, string format, int length, int[] regions) : base (id, title, (int)DbItemI.dbInfoTypes.SHOW)
         {
             this.format = format;
             this.length = length;
