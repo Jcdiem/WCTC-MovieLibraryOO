@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MovieLibrary.Managers
 {
@@ -56,6 +57,40 @@ namespace MovieLibrary.Managers
                 var tempList = JsonConvert.DeserializeObject<List<IMovie>>(json);
                 base.dbItemLibrary.AddRange(tempList);
             }
+        }
+
+        public override void OpenSQL(MovieContext no)
+        {
+            MovieContext db = new MovieContext();
+            foreach (var dbItem in db.Movies)
+            {
+                //==DEBUG==
+                string[] genres = new string[dbItem.MovieGenres.Count];
+                int id = Convert.ToInt32(dbItem.Id);
+                string title = dbItem.Title;
+
+                //Get the genres
+                foreach (DataModels.Database.MovieGenre genre in dbItem.MovieGenres) genres.Append(genre.Genre.Name); 
+
+                //Check for nulls
+                if (id == 0) throw new ArgumentNullException("ID for movie " + dbItem.Title + " returned null");
+                else if (title is null || title == "") throw new ArgumentNullException("Title for movie  with id " + id + " returned null");
+                else if (genres is null) throw new ArgumentNullException("Genres for movie " + dbItem.Title + " returned null");
+                
+
+                //Create temp db item
+                DbItemI thisMovie = new IMovie(
+                    genres,
+                    id,
+                    title);
+                    //dbItem.MovieGenres.Select(g => g.Genre.Name).ToArray(), //object dbItem child
+                    //System.Convert.ToInt32(dbItem.Id), //long id -> int
+                    //dbItem.Title); //string title
+
+                //Add it
+                base.dbItemLibrary.Add(thisMovie);
+            }
+
         }
     }
 }

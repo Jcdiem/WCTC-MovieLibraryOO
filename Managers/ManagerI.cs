@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace MovieLibrary.Managers
 {
-    public abstract class ManagerI
+    abstract class ManagerI
     {
 
         protected int curLine = 0;
@@ -24,7 +24,9 @@ namespace MovieLibrary.Managers
         public abstract void addItem(DbItemI item);
         public abstract void OpenCSV(string filePath);
         public abstract void OpenJSON(string filePath);
+        public abstract void OpenSQL(MovieContext db);
         public abstract void writeToJson();
+        
         
         
         

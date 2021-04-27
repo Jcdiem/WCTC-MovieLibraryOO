@@ -63,5 +63,10 @@ namespace MovieLibrary.Managers
                 base.dbItemLibrary.AddRange(tempList);
             }
         }
+
+        public override void OpenSQL(MovieContext db)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

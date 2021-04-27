@@ -16,9 +16,9 @@ namespace MovieLibrary
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile("appsettings.json", false, true)
                 .Build();
-            optionsBuilder.UseSqlServer(@config["BloggingContext:ConnectionString"]);
+            optionsBuilder.UseSqlServer(@config["MovieContext:ConnectionString"]);
         }
     }
 }

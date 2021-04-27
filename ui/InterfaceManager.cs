@@ -1,17 +1,133 @@
 ﻿using MovieLibrary.DataModels;
 using System;
+using System.Linq;
+using MovieLibrary.DataModels.Database;
 
 namespace MovieLibrary.ui
 {
-    public class InterfaceManager
+    class InterfaceManager
     {
         private enum fileTypes
         {
             JSON = 1,
             CSV = 2,
+            SQL = 3,
         }
 
+        public void handleSqlOperation(MovieContext db)
+        {
+            bool done = false;
+            while (!done) {
+                Console.Write("What action would you like to take? \n 1. Search for an item \n 2. Add an item \n 3. Update an item \n 4. Delete an item \n Action: ");
+                switch (Convert.ToInt32(Console.ReadLine()))
+                {
+                    case 1: //Search
+                        bool searching = true;
+                        while (searching)
+                        {
+                            Console.WriteLine("Enter the title part you would like to search by (Spaces are included in search)");
+                            Movie possibleMovie = db.Movies.Where(m => m.Title.Contains(Console.ReadLine())).FirstOrDefault();
+                            Console.WriteLine("Is " + possibleMovie.Title + " the movie you were looking for? (Y/n)");
+                            if (!Console.ReadLine().ToLower().Equals('n')) searching = false;
+                            else Console.WriteLine("Too bad!");
+                        }
+                        break;
+                    case 2: //Add
+                        bool adding = true;
+                        while (adding)
+                        {
+                            Console.Write("Title: ");
+                            string title = Console.ReadLine();
+                            if (title != null && title.Length > 0)
+                            {
+                                
 
+
+                                Console.WriteLine("Release Date (yyyy-mm-dd): ");
+                                string date = Console.ReadLine();
+                                if (date.Length != 10)
+                                {
+                                    //0 is year, 1 is month, 2 is day
+                                    string[] dateFormat = date.Split('-');
+                                    DateTime releaseDate = new DateTime(
+                                        Convert.ToInt32(dateFormat[0]), //Year
+                                        Convert.ToInt32(dateFormat[1]), //Month
+                                        Convert.ToInt32(dateFormat[2]));//Day
+
+                                    //Create the movie
+                                    Movie movie = new Movie { Title = title, Release_Date = releaseDate };
+
+                                    //Find the Genres allowed
+                                    string allowedGenres = "";
+                                    foreach (var genre in db.Genres)
+                                    {
+                                        allowedGenres += "" + genre.Name + ", ";
+                                    }
+
+                                    //Ask what genres to use
+                                    Console.WriteLine("Please choose genres for movie (You can choose more than one by using this format: Comedy|Romance|Action) \n" +
+                                        "Avaialable genres: \n " + allowedGenres);
+                                    string[] chosenGenres = Console.ReadLine().Split('|');
+                                    MovieGenre[] movieGenresUsed = new MovieGenre[chosenGenres.Length];
+
+                                    //Add the genres to the movie                                    
+                                    foreach (string genre in chosenGenres)
+                                    {
+                                        Genre tempGenre = db.Genres.Where(tG => tG.Name.ToLower().Equals(genre.ToLower())).FirstOrDefault();
+                                        if (tempGenre != null)
+                                        {
+                                            MovieGenre tempMovieGenre = new MovieGenre() { Movie = movie, Genre = tempGenre };
+                                            movie.MovieGenres.Add(tempMovieGenre);
+                                            movieGenresUsed.Append(tempMovieGenre);
+                                        }
+                                        else Console.WriteLine("Error in your genre " + genre + ", skipping.");
+                                    }
+
+                                    //Check to make sure everything is ok to user
+                                    Console.WriteLine("Are the above notices acceptable? (Y/n)");
+
+                                    if (!(Console.ReadLine().ToLower().Equals('n')))
+                                    {
+                                        //Actually add the movie
+                                        db.Movies.Add(movie);
+                                        //Add the movie genres
+                                        foreach (var movieGenre in movieGenresUsed) db.MovieGenres.Add(movieGenre);
+                                        //Save changes
+                                        db.SaveChanges();
+
+                                        adding = false;
+                                    }
+                                    else Console.WriteLine("Repeating...");
+
+                                }
+                                else Console.WriteLine("Error in date format, please try again.");
+                                                            
+                            }
+                            else
+                            {
+                                Console.WriteLine("Error in name format, please try again.");
+                            }
+                                                       
+                        }
+                        break;
+                    case 3: //Update
+                        bool updating = true;
+                        while (updating)
+                        {
+                            if (!Console.ReadLine().ToLower().Equals('n')) updating = false;
+                        }
+                        break;
+                    case 4: //Delete
+                        bool deleting = true;
+                        while (deleting)
+                        {
+                            if (!Console.ReadLine().ToLower().Equals('n')) deleting = false;
+                        }
+                        break;
+                }
+            }
+            
+        }
         public void handleDbOperation(Managers.ManagerI manager)
         {
             Console.WriteLine("Enter a 1 for data adding, a 2 for data reading, and a 3 for data searching.");
@@ -22,20 +138,44 @@ namespace MovieLibrary.ui
             {
                 while (true)
                 {
-                    Console.WriteLine("What type of file do you want? \n 1. JSON \n 2. CSV");
-                    switch (Convert.ToInt32(Console.ReadLine()))
+                    if(manager is Managers.MovieManager)
                     {
-                        case (int)fileTypes.JSON:
-                            fileType = (int)fileTypes.JSON;
-                            break;
-                        case (int)fileTypes.CSV:
-                            fileType = (int)fileTypes.CSV;
-                            break;
-                        default:
-                            Console.WriteLine("Try again, with numbers this time");
-                            break;
+                        Console.WriteLine("What type of file do you want? \n 1. JSON \n 2. CSV \n 3. SQL");
+                        switch (Convert.ToInt32(Console.ReadLine()))
+                        {
+                            case (int)fileTypes.JSON:
+                                fileType = (int)fileTypes.JSON;
+                                break;
+                            case (int)fileTypes.CSV:
+                                fileType = (int)fileTypes.CSV;
+                                break;
+                            case (int)fileTypes.SQL:
+                                fileType = (int)fileTypes.SQL;
+                                break;
+                            default:
+                                Console.WriteLine("Try again, with the correct numbers this time");
+                                break;
+                        }
+                        if (fileType != 0) break;
                     }
-                    if (fileType != 0) break;
+                    else
+                    {
+                        Console.WriteLine("What type of file do you want? \n 1. JSON \n 2. CSV");
+                        switch (Convert.ToInt32(Console.ReadLine()))
+                        {
+                            case (int)fileTypes.JSON:
+                                fileType = (int)fileTypes.JSON;
+                                break;
+                            case (int)fileTypes.CSV:
+                                fileType = (int)fileTypes.CSV;
+                                break;
+                            default:
+                                Console.WriteLine("Try again, with the correct numbers this time");
+                                break;
+                        }
+                        if (fileType != 0) break;
+                    }
+                    
                 }               
                 bool done = false;
                 while (!done)

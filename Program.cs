@@ -35,7 +35,7 @@ namespace MovieLibrary
                 switch (uix.getDbItemType())
                 {
                     case (int)DbItemI.dbInfoTypes.MOVIE:
-                        manager = new Managers.MovieManager();                                                
+                        manager = new Managers.MovieManager();
                         break;
                     case (int)DbItemI.dbInfoTypes.SHOW:
                         manager = new Managers.ShowManager();
@@ -54,7 +54,28 @@ namespace MovieLibrary
                         Console.WriteLine("ERROR IN CREATING MANAGER :: IMPROPER TYPE");
                         throw new Exception("Unvalidated user input for data type caused crash");
                 }
-                if (!universalDb)
+
+
+                bool useSQL = false;
+                if (manager is Managers.MovieManager)
+                {
+                    Console.WriteLine("Would you like to use the SQL Database? (Y/n)");
+                    if (!(Console.ReadLine().ToLower().Equals('n'))) useSQL = true;
+                }                              
+                
+                //Movie SQL Database
+                if (useSQL && manager is Managers.MovieManager)
+                {
+                    MovieContext db = new MovieContext();
+                    manager.OpenSQL(db);
+                    uix.handleDbOperation(manager);
+                    //Search for movie
+                    //Add movie
+                    //Update a movie
+                    //Delete a movie
+                }
+                //Any item that doesn't use SQL or universal
+                else if (!universalDb)
                 {
                     Console.WriteLine("Please give the path to the file or the file name if in the current directory. \n" +
                     " Example files that came with this project are: \n" +
@@ -62,6 +83,7 @@ namespace MovieLibrary
                     manager.Open(Console.ReadLine());
                     uix.handleDbOperation(manager);
                 }
+                //Universal item
                 else
                 {
                     Utilities.Searcher dbSearch = null;
