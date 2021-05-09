@@ -13,12 +13,90 @@ namespace MovieLibrary.ui
             CSV = 2,
             SQL = 3,
         }
+        
+        public void handleUserDatabase(dotnetfinalDbContext db)
+        {
+            bool done = false;
+            User userToBeAdded = null;
+            while (!done)
+            {
+                //TODO: Add input checks
+                            
+                Console.WriteLine("Please answer the following questions.");
+                Console.Write("Age: ");
+                int age = Convert.ToInt32(Console.ReadLine());
+                Console.Write("Biological Sex (Female, Male, or Other): ");
+                string sex = Console.ReadLine().ToUpper().Substring(0,1);                
+                Console.Write("Zip code: ");
+                string zip = Console.ReadLine();
+                userToBeAdded = new User() { Age = age, Id = db.Occupations.Count() + 1, Gender = sex, ZipCode = zip };
 
-        public void handleSqlOperation(dotnetfinalDbContext db)
+
+                Console.WriteLine("Occupuation: ");
+                string jobTitle = Console.ReadLine();
+                Occupation foundJob = db.Occupations.Where(o => o.Name.Contains(jobTitle)).FirstOrDefault();
+                //If the job is found
+                if (foundJob != null)
+                {
+                    userToBeAdded.Occupation = foundJob; 
+                    userToBeAdded.OccupationId = foundJob.Id;
+                }
+                //Otherwise create it
+                else
+                {
+                    foundJob = new Occupation { Name = jobTitle, Id = db.Occupations.Count() + 1 };
+                    userToBeAdded.Occupation = foundJob;
+                    userToBeAdded.OccupationId = foundJob.Id;
+                }
+                Console.WriteLine("User will be created will following values: \n" +
+                    "Age: " + age +
+                    "Gender: " + sex + 
+                    "ZipCode: " + zip +
+                    "Occupation: " + jobTitle +
+                    "Is the above information correct? (Y/n)");
+                if (Console.ReadLine().ToUpper() == "N") Console.WriteLine("restarting user creation...");
+                else
+                {
+                    db.Occupations.Add(foundJob);
+                    db.Users.Add(userToBeAdded);
+                    done = true;
+                    Console.WriteLine("Exiting user creation and saving...");
+                }
+            }
+            db.SaveChanges();            
+            Console.WriteLine("Would you like to rate any movies as this user? (Y/n)");
+            if (Console.ReadLine().ToUpper() != "N")
+            {
+                if (userToBeAdded == null) throw new Exception("User is null, yet trying to rate a movie");
+                done = false;
+                while (!done)
+                {
+                    Movie searchedMovie = searchForMovie(db);
+                    int ratingNum;
+                    while (true)
+                    {
+                        Console.WriteLine("What would you rate this movie out of 5?");
+                        ratingNum = Convert.ToInt32(Console.ReadLine());
+                        if (ratingNum >= 1 && ratingNum <= 5) break;
+                        else Console.WriteLine("Invalid rating, please try again.");
+                    }
+                    UserMovie rating = new UserMovie
+                    {
+                        User = userToBeAdded,
+                        Movie = searchedMovie,
+                        RatedAt = DateTime.Now,
+                        Rating = ratingNum                        
+                    };
+                }
+            }
+            else Console.WriteLine("Closing application...");
+        }
+
+        public void handleMediaSqlOperation(dotnetfinalDbContext db)
         {
             bool done = false;
             while (!done) {
-                Console.Write("What action would you like to take? \n 1. Search for an item \n 2. Add an item \n 3. Update an item \n 4. Delete an item \n Action: ");
+                Console.Write("What action would you like to take? \n 1. Search for an item \n 2. Add an item \n 3. Update an item \n 4. Delete an item \n Action Number: ");
                 switch (Convert.ToInt32(Console.ReadLine()))
                 {
                     case 1: //Search
