@@ -1,7 +1,7 @@
-﻿using MovieLibrary.DataModels;
-using System;
+﻿using System;
 using System.Linq;
-using MovieLibrary.DataModels.Database;
+using MovieLibrary.DataModels.DB;
+using MovieLibrary.DataModels;
 
 namespace MovieLibrary.ui
 {
@@ -14,7 +14,7 @@ namespace MovieLibrary.ui
             SQL = 3,
         }
 
-        public void handleSqlOperation(MovieContext db)
+        public void handleSqlOperation(dotnetfinalDbContext db)
         {
             bool done = false;
             while (!done) {
@@ -48,7 +48,7 @@ namespace MovieLibrary.ui
                                         Convert.ToInt32(dateFormat[2]));//Day
 
                                     //Create the movie
-                                    Movie movie = new Movie { Title = title, Release_Date = releaseDate };
+                                    Movie thisMovie = new Movie { Title = title, ReleaseDate = releaseDate };
 
                                     //Find the Genres allowed
                                     string allowedGenres = "";
@@ -69,8 +69,8 @@ namespace MovieLibrary.ui
                                         Genre tempGenre = db.Genres.Where(tG => tG.Name.ToLower().Equals(genre.ToLower())).FirstOrDefault();
                                         if (tempGenre != null)
                                         {
-                                            MovieGenre tempMovieGenre = new MovieGenre() { Movie = movie, Genre = tempGenre };
-                                            movie.MovieGenres.Add(tempMovieGenre);
+                                            MovieGenre tempMovieGenre = new MovieGenre() { Movie = thisMovie, Genre = tempGenre };
+                                            thisMovie.MovieGenres.Add(tempMovieGenre);
                                             movieGenresUsed.Append(tempMovieGenre);
                                         }
                                         else Console.WriteLine("Error in your genre " + genre + ", skipping.");
@@ -82,7 +82,7 @@ namespace MovieLibrary.ui
                                     if (!(Console.ReadLine().ToLower().Equals('n')))
                                     {
                                         //Actually add the movie
-                                        db.Movies.Add(movie);
+                                        db.Movies.Add(thisMovie);
                                         //Add the movie genres
                                         foreach (var movieGenre in movieGenresUsed) db.MovieGenres.Add(movieGenre);
                                         //Save changes
@@ -359,7 +359,7 @@ namespace MovieLibrary.ui
             Console.WriteLine("Goodbye!");
         }
 
-        private Movie searchForMovie(MovieContext db)
+        private Movie searchForMovie(dotnetfinalDbContext db)
         {
             while (true)
             {
@@ -375,7 +375,7 @@ namespace MovieLibrary.ui
             Console.WriteLine("Printing full details about movie.");
             string genres = "";
             foreach (var genre in movie.MovieGenres) genres += "" + genre.Genre.Name;
-            Console.WriteLine("Title: " + movie.Title + "\n Date Released: " + movie.Release_Date.ToString() + "\n Genres: " + genres);
+            Console.WriteLine("Title: " + movie.Title + "\n Date Released: " + movie.ReleaseDate.ToString() + "\n Genres: " + genres);
         }
     }    
 }

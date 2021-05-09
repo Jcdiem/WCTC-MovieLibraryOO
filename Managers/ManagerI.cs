@@ -11,7 +11,7 @@ namespace MovieLibrary.Managers
     {
 
         protected int curLine = 0;
-        protected CsvReader csv;
+        //protected CsvReader csv;
         protected List<DbItemI> dbItemLibrary;
         protected string filePath;
 
@@ -24,7 +24,7 @@ namespace MovieLibrary.Managers
         public abstract void addItem(DbItemI item);
         public abstract void OpenCSV(string filePath);
         public abstract void OpenJSON(string filePath);
-        public abstract void OpenSQL(MovieContext db);
+        public abstract void OpenSQL(dotnetfinalDbContext db);
         public abstract void writeToJson();
         
         

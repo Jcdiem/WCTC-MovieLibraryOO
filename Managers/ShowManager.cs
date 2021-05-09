@@ -61,7 +61,7 @@ namespace MovieLibrary.Managers
             }
         }
 
-        public override void OpenSQL(MovieContext db)
+        public override void OpenSQL(dotnetfinalDbContext db)
         {
             throw new NotImplementedException();
         }

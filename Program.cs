@@ -66,7 +66,7 @@ namespace MovieLibrary
                 //Movie SQL Database
                 if (useSQL && manager is Managers.MovieManager)
                 {
-                    MovieContext db = new MovieContext();
+                    dotnetfinalDbContext db = new dotnetfinalDbContext();
                     manager.OpenSQL(db);
                     uix.handleDbOperation(manager);
                     //Search for movie

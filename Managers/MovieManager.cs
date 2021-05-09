@@ -59,28 +59,36 @@ namespace MovieLibrary.Managers
             }
         }
 
-        public override void OpenSQL(MovieContext no)
+        public override void OpenSQL(dotnetfinalDbContext db)
         {
-            MovieContext db = new MovieContext();
-            foreach (var dbItem in db.Movies)
+            //Console.WriteLine("example MovieGenre: " + JsonConvert.SerializeObject(db.MovieGenres.First()));
+            //MovieContext db = new MovieContext();
+            Console.WriteLine(" movie count " + db.Movies.Count());
+            foreach (DataModels.DB.Movie loopItem in db.Movies)
             {
-                //==DEBUG==
-                string[] genres = new string[dbItem.MovieGenres.Count];
-                int id = Convert.ToInt32(dbItem.Id);
-                string title = dbItem.Title;
+
+                //==DEBUG==               
+                Console.WriteLine("Json of cur object: \n" + JsonConvert.SerializeObject(loopItem));
+                List <String> tGenres;
+                tGenres = new List<string> { };
+                int id = Convert.ToInt32(loopItem.Id);
+                string title = loopItem.Title;
 
                 //Get the genres
-                foreach (DataModels.Database.MovieGenre genre in dbItem.MovieGenres) genres.Append(genre.Genre.Name); 
+                foreach (DataModels.DB.MovieGenre loopGenre in loopItem.MovieGenres)
+                {
+                    tGenres.Add(loopGenre.Genre.Name);
+                }
 
                 //Check for nulls
-                if (id == 0) throw new ArgumentNullException("ID for movie " + dbItem.Title + " returned null");
+                if (id == 0) throw new ArgumentNullException("ID for movie " + loopItem.Title + " returned null");
                 else if (title is null || title == "") throw new ArgumentNullException("Title for movie  with id " + id + " returned null");
-                else if (genres is null) throw new ArgumentNullException("Genres for movie " + dbItem.Title + " returned null");
+                else if (tGenres is null) throw new ArgumentNullException("Genres for movie " + loopItem.Title + " returned null");
                 
 
                 //Create temp db item
                 DbItemI thisMovie = new IMovie(
-                    genres,
+                    tGenres.ToArray(),
                     id,
                     title);
                     //dbItem.MovieGenres.Select(g => g.Genre.Name).ToArray(), //object dbItem child
