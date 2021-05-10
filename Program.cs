@@ -123,6 +123,7 @@ namespace MovieLibrary
                     
                     uix.searchUniversal(dbSearch);
                 }
+                Console.WriteLine("Goodbye! :)");
                              
            }
            catch (Exception ex)

@@ -30,35 +30,34 @@ namespace MovieLibrary.ui
                 string sex = Console.ReadLine().ToUpper().Substring(0,1);                
                 Console.Write("Zip code: ");
                 string zip = Console.ReadLine();
-                userToBeAdded = new User() { Age = age, Id = db.Occupations.Count() + 1, Gender = sex, ZipCode = zip };
+                userToBeAdded = new User() { Age = age, Gender = sex, ZipCode = zip };
 
-
-                Console.WriteLine("Occupuation: ");
-                string jobTitle = Console.ReadLine();
-                Occupation foundJob = db.Occupations.Where(o => o.Name.Contains(jobTitle)).FirstOrDefault();
-                //If the job is found
-                if (foundJob != null)
+                string jobTitle;
+                Occupation foundJob;
+                while (true)
                 {
-                    userToBeAdded.Occupation = foundJob; 
-                    userToBeAdded.OccupationId = foundJob.Id;
+                    foreach (Occupation job in db.Occupations) Console.WriteLine(job.Name);
+                    Console.Write("Please select your ocupation from the above list: ");
+                    jobTitle = Console.ReadLine();
+                    foundJob = db.Occupations.Where(o => o.Name.Contains(jobTitle)).FirstOrDefault();                   
+                    if (foundJob != null)
+                    {
+                        userToBeAdded.Occupation = foundJob;
+                        userToBeAdded.OccupationId = foundJob.Id;
+                        break;
+                    }
+                    else Console.WriteLine("Not a valid job, please try again.");
                 }
-                //Otherwise create it
-                else
-                {
-                    foundJob = new Occupation { Name = jobTitle, Id = db.Occupations.Count() + 1 };
-                    userToBeAdded.Occupation = foundJob;
-                    userToBeAdded.OccupationId = foundJob.Id;
-                }
+                
                 Console.WriteLine("User will be created will following values: \n" +
-                    "Age: " + age +
-                    "Gender: " + sex + 
-                    "ZipCode: " + zip +
-                    "Occupation: " + jobTitle +
+                    "Age: " + age + "\n" +
+                    "Gender: " + sex + " \n" + 
+                    "ZipCode: " + zip + "\n" +
+                    "Occupation: " + jobTitle + "\n" +
                     "Is the above information correct? (Y/n)");
                 if (Console.ReadLine().ToUpper() == "N") Console.WriteLine("restarting user creation...");
                 else
                 {
-                    db.Occupations.Add(foundJob);
                     db.Users.Add(userToBeAdded);
                     done = true;
                     Console.WriteLine("Exiting user creation and saving...");
@@ -69,8 +68,7 @@ namespace MovieLibrary.ui
             if (Console.ReadLine().ToUpper() != "N")
             {
                 if (userToBeAdded == null) throw new Exception("User is null, yet trying to rate a movie");
-                done = false;
-                while (!done)
+                while (true)
                 {
                     Movie searchedMovie = searchForMovie(db);
                     int ratingNum;
@@ -88,6 +86,10 @@ namespace MovieLibrary.ui
                         RatedAt = DateTime.Now,
                         Rating = ratingNum                        
                     };
+                    db.Add(rating);
+                    db.SaveChanges();
+                    Console.WriteLine("Are you done adding ratings? (y/N)");
+                    if (Console.ReadLine().ToLower().Equals("y")) break;                   
                 }
             }
             else Console.WriteLine("Closing application...");
