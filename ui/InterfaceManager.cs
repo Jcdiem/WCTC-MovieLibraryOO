@@ -86,6 +86,7 @@ namespace MovieLibrary.ui
                         RatedAt = DateTime.Now,
                         Rating = ratingNum                        
                     };
+                    Console.WriteLine("You rated " + searchedMovie.Title + " " + ratingNum + "/5");
                     db.Add(rating);
                     db.SaveChanges();
                     Console.WriteLine("Are you done adding ratings? (y/N)");
@@ -99,12 +100,67 @@ namespace MovieLibrary.ui
         {
             bool done = false;
             while (!done) {
-                Console.Write("What action would you like to take? \n 1. Search for an item \n 2. Add an item \n 3. Update an item \n 4. Delete an item (WILL DELETE ALL ASSOCIATED RECORDS!) \n Action Number: ");
+                Console.Write("What action would you like to take? \n 1. Search for an item (Includes Criterion Searches) \n 2. Add an item \n 3. Update an item \n 4. Delete an item (WILL DELETE ALL ASSOCIATED RECORDS!) \n Action Number: ");
                 switch (Convert.ToInt32(Console.ReadLine()))
                 {
-                    case 1: //Search                       
-                        Movie movie = searchForMovie(db);
-                        printMovieDetails(movie);                                                
+                    case 1: //Search & Stats
+                        Console.WriteLine("Options for searching: \n 1. Basic Search \n 2. Top Rated by criterion");
+                        switch (Convert.ToInt32(Console.ReadLine()))
+                        {
+                            //Basic Search
+                            case 1:
+                                Movie movie = searchForMovie(db);
+                                printMovieDetails(movie);
+                                break;
+                            //Rating by bracket
+                            case 2:
+                                while (true)
+                                {                                    
+                                    Console.WriteLine("Sort by Occupation or Age? (O/A)");
+                                    string bracket = Console.ReadLine().Substring(0, 1).ToUpper();
+                                    if (bracket.Equals("O"))
+                                    {
+                                        Occupation foundJob;
+                                        //Loop for getting occupation to sort by
+                                        while (true)
+                                        {
+                                            foreach (Occupation job in db.Occupations) Console.WriteLine(job.Name);
+                                            Console.Write("Occupation from above list to sort by: ");
+                                            String jobTitle = Console.ReadLine();
+                                            foundJob = db.Occupations.Where(o => o.Name.Contains(jobTitle)).FirstOrDefault();
+                                            if (foundJob != null)
+                                            {
+                                                break;
+                                            }
+                                            else Console.WriteLine("Not a valid job, please try again.");
+                                        }
+                                        //Use the occupation to print results
+                                        Console.WriteLine("Printing first movie rating by users with occupation " + foundJob.Name);
+                                        UserMovie data = db.UserMovies.Where(um => um.User.Occupation == foundJob).OrderBy(um => um.Movie.Title).FirstOrDefault();
+                                        if (data != null) Console.WriteLine(data.Movie.Title + "  |  " + data.Rating + "/5");
+                                        else Console.WriteLine("No ratings found for that occupation.");
+                                        break;
+                                    }
+                                    else if (bracket.Equals("A"))
+                                    {
+                                        //Loop to find proper age
+                                        int sortAge;
+                                        while (true)
+                                        {
+                                            Console.WriteLine("What age would you like to sort by?");
+                                            sortAge = Convert.ToInt32(Console.ReadLine());
+                                            if (sortAge >= 1 || sortAge <= 150) break;
+                                            else Console.WriteLine("Please enter a valid age (between 1 and 150)");
+                                        }
+                                        UserMovie data = db.UserMovies.Where(um => um.User.Age == sortAge).OrderBy(um => um.Movie.Title).FirstOrDefault();
+                                        if (data != null) Console.WriteLine(data.Movie.Title + "  | Rated: " + data.Rating + "/5");
+                                        else Console.WriteLine("No ratings found for that occupation.");
+                                        break;
+                                    }                                    
+                                    else Console.WriteLine("Not a valid choice, please try again.");
+                                }                                
+                                break;
+                        }                                                                        
                         break;
                     case 2: //Add
                         bool adding = true;
@@ -268,8 +324,9 @@ namespace MovieLibrary.ui
                             db.SaveChanges();
                             break;
                         }
-                        break;
+                        break;                    
                 }
+                break;
             }
             
         }
