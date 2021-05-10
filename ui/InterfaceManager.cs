@@ -3,6 +3,8 @@ using System.Linq;
 using MovieLibrary.DataModels.DB;
 using MovieLibrary.DataModels;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace MovieLibrary.ui
 {
@@ -189,7 +191,7 @@ namespace MovieLibrary.ui
                                     { 
                                         Title = title, 
                                         ReleaseDate = releaseDate, 
-                                        Id = db.Movies.OrderBy(item => item.Id).Last().Id + 1,                                        
+                                        //Id = db.Movies.OrderBy(item => item.Id).Last().Id + 1,                                        
                                     };
 
                                     //Find the Genres allowed
@@ -203,7 +205,7 @@ namespace MovieLibrary.ui
                                     Console.WriteLine("Please choose genres for movie (You can choose more than one by using this format: Comedy|Romance|Action) \n" +
                                         "Avaialable genres: \n " + allowedGenres);
                                     string[] chosenGenres = Console.ReadLine().Split('|');
-                                    MovieGenre[] movieGenresUsed = new MovieGenre[chosenGenres.Length];
+                                    List<MovieGenre> movieGenresUsed = new List<MovieGenre> { };
 
                                     //Add the genres to the movie                                    
                                     foreach (string genre in chosenGenres)
@@ -216,13 +218,12 @@ namespace MovieLibrary.ui
                                             MovieGenre tempMovieGenre = new MovieGenre() 
                                             { 
                                                 Movie = thisMovie,
-                                                MovieId = thisMovie.Id,
+                                                //MovieId = thisMovie.Id,
                                                 Genre = tempGenre, 
-                                                GenreId = tempGenre.Id,
-                                                Id = db.MovieGenres.OrderBy(item => item.Id).Last().Id +1,                                                
+                                                //GenreId = tempGenre.Id,                                                
                                             };
                                             thisMovie.MovieGenres.Add(tempMovieGenre);
-                                            movieGenresUsed.Append(tempMovieGenre);
+                                            movieGenresUsed.Add(tempMovieGenre);
                                         }
                                         else Console.WriteLine("Error in your genre " + genre + ", skipping.");
                                     }
@@ -235,6 +236,8 @@ namespace MovieLibrary.ui
                                         //Actually add the movie
                                         db.Movies.Add(thisMovie);
                                         //Add the movie genres
+                                        Console.WriteLine("Got here");
+                                        //Console.WriteLine(JsonConvert.SerializeObject(movieGenresUsed[0]));
                                         foreach (MovieGenre movieGenre in movieGenresUsed) db.MovieGenres.Add(movieGenre);
                                         //Save changes
                                         db.SaveChanges();
