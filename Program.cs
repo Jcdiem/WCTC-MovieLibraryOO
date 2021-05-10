@@ -79,7 +79,7 @@ namespace MovieLibrary
                 {
                     dotnetfinalDbContext db = new dotnetfinalDbContext();
                     manager.OpenSQL(db);
-                    uix.handleDbOperation(manager);
+                    uix.handleMediaSqlOperation(db);
                     //==Managed Actions==
                     //Search for movie
                     //Add movie

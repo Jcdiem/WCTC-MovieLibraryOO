@@ -63,12 +63,12 @@ namespace MovieLibrary.Managers
         {
             //Console.WriteLine("example MovieGenre: " + JsonConvert.SerializeObject(db.MovieGenres.First()));
             //MovieContext db = new MovieContext();
-            Console.WriteLine(" movie count " + db.Movies.Count());
+            //Console.WriteLine(" movie count " + db.Movies.Count());
             foreach (DataModels.DB.Movie loopItem in db.Movies)
             {
 
                 //==DEBUG==               
-                Console.WriteLine("Json of cur object: \n" + JsonConvert.SerializeObject(loopItem));
+                //Console.WriteLine("Json of cur object: \n" + JsonConvert.SerializeObject(loopItem));
                 List <String> tGenres;
                 tGenres = new List<string> { };
                 int id = Convert.ToInt32(loopItem.Id);

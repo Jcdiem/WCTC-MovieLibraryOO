@@ -2,6 +2,7 @@
 using System.Linq;
 using MovieLibrary.DataModels.DB;
 using MovieLibrary.DataModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace MovieLibrary.ui
 {
@@ -96,12 +97,12 @@ namespace MovieLibrary.ui
         {
             bool done = false;
             while (!done) {
-                Console.Write("What action would you like to take? \n 1. Search for an item \n 2. Add an item \n 3. Update an item \n 4. Delete an item \n Action Number: ");
+                Console.Write("What action would you like to take? \n 1. Search for an item \n 2. Add an item \n 3. Update an item \n 4. Delete an item (WILL DELETE ALL ASSOCIATED RECORDS!) \n Action Number: ");
                 switch (Convert.ToInt32(Console.ReadLine()))
                 {
-                    case 1: //Search
+                    case 1: //Search                       
                         Movie movie = searchForMovie(db);
-                        printMovieDetails(movie);
+                        printMovieDetails(movie);                                                
                         break;
                     case 2: //Add
                         bool adding = true;
@@ -116,7 +117,7 @@ namespace MovieLibrary.ui
 
                                 Console.WriteLine("Release Date (yyyy-mm-dd): ");
                                 string date = Console.ReadLine();
-                                if (date.Length != 10)
+                                if (date.Length == 10)
                                 {
                                     //0 is year, 1 is month, 2 is day
                                     string[] dateFormat = date.Split('-');
@@ -126,7 +127,12 @@ namespace MovieLibrary.ui
                                         Convert.ToInt32(dateFormat[2]));//Day
 
                                     //Create the movie
-                                    Movie thisMovie = new Movie { Title = title, ReleaseDate = releaseDate };
+                                    Movie thisMovie = new Movie 
+                                    { 
+                                        Title = title, 
+                                        ReleaseDate = releaseDate, 
+                                        Id = db.Movies.OrderBy(item => item.Id).Last().Id + 1,                                        
+                                    };
 
                                     //Find the Genres allowed
                                     string allowedGenres = "";
@@ -144,10 +150,19 @@ namespace MovieLibrary.ui
                                     //Add the genres to the movie                                    
                                     foreach (string genre in chosenGenres)
                                     {
+                                        //Console.WriteLine("Looking for genre " + genre);
                                         Genre tempGenre = db.Genres.Where(tG => tG.Name.ToLower().Equals(genre.ToLower())).FirstOrDefault();
+                                        //Console.WriteLine("Found genre! JSON: \n " + JsonConvert.SerializeObject(tempGenre));
                                         if (tempGenre != null)
                                         {
-                                            MovieGenre tempMovieGenre = new MovieGenre() { Movie = thisMovie, Genre = tempGenre };
+                                            MovieGenre tempMovieGenre = new MovieGenre() 
+                                            { 
+                                                Movie = thisMovie,
+                                                MovieId = thisMovie.Id,
+                                                Genre = tempGenre, 
+                                                GenreId = tempGenre.Id,
+                                                Id = db.MovieGenres.OrderBy(item => item.Id).Last().Id +1,                                                
+                                            };
                                             thisMovie.MovieGenres.Add(tempMovieGenre);
                                             movieGenresUsed.Append(tempMovieGenre);
                                         }
@@ -162,10 +177,9 @@ namespace MovieLibrary.ui
                                         //Actually add the movie
                                         db.Movies.Add(thisMovie);
                                         //Add the movie genres
-                                        foreach (var movieGenre in movieGenresUsed) db.MovieGenres.Add(movieGenre);
+                                        foreach (MovieGenre movieGenre in movieGenresUsed) db.MovieGenres.Add(movieGenre);
                                         //Save changes
                                         db.SaveChanges();
-
                                         adding = false;
                                     }
                                     else Console.WriteLine("Repeating...");
@@ -188,29 +202,69 @@ namespace MovieLibrary.ui
                             Movie movieToUpdate = searchForMovie(db);
                             Console.WriteLine(movieToUpdate.Title + " selected...");
                             printMovieDetails(movieToUpdate);
-                            Console.WriteLine("What would you like to update? \n 1. Title \n 2. Release date \n 3. Genres");
+                            db.Attach(movieToUpdate);
+                            Console.WriteLine("What would you like to update? \n 1. Title \n 2. Release date");
+                            DateTime modifiedDate;
+                            string modifiedTitle;
                             switch (Convert.ToInt32(Console.ReadLine()))
                             {
                                 case 1: //Title
-                                    Console.WriteLine("What would you like the new title to be?");
+                                    while (true)
+                                    {
+                                        Console.WriteLine("What would you like the new title to be?");
+                                        modifiedTitle = Console.ReadLine();
+                                        if (modifiedTitle != null)
+                                        {
+                                            movieToUpdate.Title = modifiedTitle;
+                                            db.Entry(movieToUpdate).Property("Title").IsModified = true;
+                                            break;
+                                        }
+                                        else Console.WriteLine("Error, title cannot be empty, restarting...");
+                                    }                                                                        
                                     break;
                                 case 2: //Release Date
-                                    Console.WriteLine("What would you like the new date to be? (yyyy-mm-dd)");
-                                    break;
-                                case 3: //Genres
-                                    break;
-                            
+                                    while(true){
+                                        Console.WriteLine("What would you like the new date to be? (yyyy-mm-dd)");
+                                        string date = Console.ReadLine();
+                                        if (date.Length == 10)
+                                        {
+                                            //0 is year, 1 is month, 2 is day
+                                            string[] dateFormat = date.Split('-');
+                                            modifiedDate = new DateTime(
+                                                Convert.ToInt32(dateFormat[0]), //Year
+                                                Convert.ToInt32(dateFormat[1]), //Month
+                                                Convert.ToInt32(dateFormat[2]));//Day
+                                            break;
+                                        }
+                                        else Console.WriteLine("Error in format, please try again.");                                        
+                                    }
+                                    db.Entry(movieToUpdate).Property("ReleaseDate").IsModified = true;
+                                    break;                            
                             }
+                            Console.WriteLine("Is the above information correct? (Y/n)");
+                            db.SaveChanges();
                             if (!Console.ReadLine().ToLower().Equals('n')) updating = false;
                         }
                         break;
                     case 4: //Delete
                         bool deleting = true;
                         while (deleting)
-                        {
+                        {                            
                             Movie movieToDelete = searchForMovie(db);
+                            //Delete any associated MovieGenre
+                            foreach (MovieGenre i in db.MovieGenres.Where( mg => mg.MovieId == movieToDelete.Id))
+                            {
+                                db.Remove(i);
+                            }
+                            //Delete any reviews
+                            foreach (UserMovie i in db.UserMovies.Where(um => um.MovieId == movieToDelete.Id))
+                            {
+                                db.Remove(i);
+                            }
                             //Delete movie
-                            if (!Console.ReadLine().ToLower().Equals('n')) deleting = false;
+                            db.Remove(movieToDelete);
+                            db.SaveChanges();
+                            break;
                         }
                         break;
                 }
@@ -447,9 +501,13 @@ namespace MovieLibrary.ui
             {
                 Console.WriteLine("Enter the title part you would like to search by (Spaces are included in search)");
                 Movie possibleMovie = db.Movies.Where(m => m.Title.Contains(Console.ReadLine())).FirstOrDefault();
-                Console.WriteLine("Is " + possibleMovie.Title + " the movie you were looking for? (Y/n)");
-                if (!Console.ReadLine().ToLower().Equals('n')) return possibleMovie;
-                else Console.WriteLine("Restartng, please change your search");
+                if(possibleMovie != null)
+                {
+                    Console.WriteLine("Is " + possibleMovie.Title + " the movie you were looking for? (Y/n)");
+                    if(Console.ReadLine().ToLower() != "n") return possibleMovie;
+                } 
+                else Console.WriteLine("ERROR: No movie found!");                
+                Console.WriteLine("Restartng, please change your search");                
             }
         }
         private void printMovieDetails(Movie movie)
