@@ -11,6 +11,7 @@
         public enum dbInfoTypes : int
         {
             //Dummy types
+            USER = -3,
             UNIVERSAL = -2,
             DEBUG = -1,
             //Real Types

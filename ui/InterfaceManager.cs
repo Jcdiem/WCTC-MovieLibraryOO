@@ -382,7 +382,7 @@ namespace MovieLibrary.ui
             int dbItemType = -1;
             while (dbItemType == -1)
             {
-                Console.WriteLine("Please enter the number for the data type: \n 1. Movie \n 2. Show \n 3. Video \n 4. All Types (Read Only) ");
+                Console.WriteLine("Please enter the number for the data type: \n 1. Movie \n 2. Show \n 3. Video \n 4. All Types (Read Only) \n 5. User ");
                 var tInput = Convert.ToInt32(Console.ReadLine());
                 switch (tInput)
                 {
@@ -401,6 +401,10 @@ namespace MovieLibrary.ui
                     case 4:
                         Console.WriteLine("Selected Universal Data Reading");
                         dbItemType = (int)DbItemI.dbInfoTypes.UNIVERSAL;
+                        break;
+                    case 5:
+                        Console.WriteLine("Selected user operations...");
+                        dbItemType = (int)DbItemI.dbInfoTypes.USER;
                         break;
                     default:
                         Console.WriteLine("Improper selection, try again.");

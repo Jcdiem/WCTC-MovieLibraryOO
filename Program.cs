@@ -30,6 +30,7 @@ namespace MovieLibrary
            try
            {
                 bool universalDb = false;
+                bool userDb = false;
                 Managers.ManagerI manager;
 
                 switch (uix.getDbItemType())
@@ -46,8 +47,11 @@ namespace MovieLibrary
                     case (int)DbItemI.dbInfoTypes.UNIVERSAL:
                         //Ensure read only!
                         manager = null;
-                        universalDb = true;
-
+                        universalDb = true;                        
+                        break;
+                    case (int)DbItemI.dbInfoTypes.USER:
+                        manager = new Managers.MovieManager();
+                        userDb = true;
                         break;
                     default:
                         manager = null;
@@ -55,25 +59,33 @@ namespace MovieLibrary
                         throw new Exception("Unvalidated user input for data type caused crash");
                 }
 
-
                 bool useSQL = false;
-                if (manager is Managers.MovieManager)
+                if (userDb) useSQL = true;
+                else if (manager is Managers.MovieManager)
                 {
                     Console.WriteLine("Would you like to use the SQL Database? (Y/n)");
                     if (!(Console.ReadLine().ToLower().Equals('n'))) useSQL = true;
                 }                              
                 
+                //User actions built on movie SQL database
+                if(userDb && manager is Managers.MovieManager)
+                {
+                    dotnetfinalDbContext db = new dotnetfinalDbContext();
+                    manager.OpenSQL(db);
+                    uix.handleUserDatabase(db);
+                }
                 //Movie SQL Database
-                if (useSQL && manager is Managers.MovieManager)
+                else if (useSQL && manager is Managers.MovieManager)
                 {
                     dotnetfinalDbContext db = new dotnetfinalDbContext();
                     manager.OpenSQL(db);
                     uix.handleDbOperation(manager);
+                    //==Managed Actions==
                     //Search for movie
                     //Add movie
                     //Update a movie
                     //Delete a movie
-                }
+                }                
                 //Any item that doesn't use SQL or universal
                 else if (!universalDb)
                 {
